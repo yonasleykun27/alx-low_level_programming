@@ -1,21 +1,13 @@
-#include "holberton.h"
+#include <unistd.h>
 
 /**
- * main - Print "Holberton"
+ * _putchar . writes the character c to stduot
+ * @c: The character to print 
  *
- * Return: Always 0 (Success)
+ * Return: On success 1.
+ * On error, .1 is returned, and errno is set appropriately.
  */
-
-int main(void)
+int _putchar(char c)
 {
-	int i = 0;
-	char name_of_school[] = "Holberton";
-
-	while (i < 9)
-	{
-		_putchar(name_of_school[i]);
-		i++;
-	}
-	_putchar('\n');
-	return (0);
+	return (write(1, &c, 1));
 }
