@@ -187,12 +187,14 @@ void add_nums(char *final_prod, char *next_prod, int next_len)
  */
 int main(int argc, char *argv[])
 {
-unsigned long mul;
-int i, j;
+	char *final_prod, *next_prod;
+	int size, index, digit, zeroes = 0;
+
 	if (argc != 3)
-	{ printf("Error\n");
-	exit(98); }
-	for (i = 1; i < argc; i++)
+	{
+		printf("Error\n");
+		exit(98);
+		for (i = 1; i < argc; i++)
 	{
 		for (j = 0; argv[i][j] != '\0'; j++)
 		{
@@ -202,22 +204,7 @@ int i, j;
 		}
 
 	}
-	mul = atol(argv[1]) *  atol(argv[2]);
-	printf("%lu\n", mul);
-return (0);
-}
-
-int main(int argc, char *argv[])
-{
-	char *final_prod, *next_prod;
-	int size, index, digit, zeroes = 0;
-
-	if (argc != 3)
-	{
-		printf("Error\n");
-		exit(98);
-	}
-
+	
 	if (*(argv[1]) == '0')
 		argv[1] = iterate_zeroes(argv[1]);
 	if (*(argv[2]) == '0')
