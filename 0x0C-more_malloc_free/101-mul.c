@@ -1,181 +1,226 @@
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "main.h"
 
-void populateResult(char *dest, char *n1, int n1_len, char *n2, int n2_len);
-int getLengthOfNum(char *str);
-void print_result(char *src, int length);
+int _strlen(char *s);
+char *xarray(int size);
+char *_zero_iteration(char *s);
+int convert_to_digit(char s);
+void _product(char *prod, char *mul, int digit, int zeroes);
+void nums_add(char *final_prod, char *next_prod, int next_len);
 
 /**
- * main - entry point, multiplies two numbers
+ *_strlen - length of string
  *
- * @argc: integer, length of @argv
+ *@s:string
  *
- * @argv: one-dimensional array of strings, arguments of this program
+ *Return:string length
  *
- * Return: 0, success
  */
+int _strlen(char *s)
+{
+	int i;
 
+	for (i = 0; s[i] != '\0'; i++)
+		;
+	return (i);
+}
+/**
+ *xarray - creates an array and initializes its value to x plus terminating
+ *null byte
+ *@size:size of array to be initialised
+ *Return:pointer to array
+ */
+char *xarray(int size)
+{
+	int i;
+	char *arr;
+
+	arr = malloc(sizeof(char) * size);
+	if (arr == NULL)
+	{
+		exit(98);
+	}
+	for (i = 0; i < (size - 1); i++)
+	{
+		arr[i] = 'x';
+	}
+	arr[i] = '\0';
+	return (arr);
+}
+/**
+ *_zero_iteration - iterates thru a given no. of zeroes
+ *
+ *@s:string to be iterated
+ *Return:pointer to next non-zero element
+ */
+char *_zero_iteration(char *s)
+{
+	while (*s && *s == '0')
+	{
+		s++;
+	}
+	return (s);
+}
+/**
+ *convert_to_digit - converts digit character to int
+ *
+ *@s:digit character
+ *
+ *Return:converted int
+ *
+ */
+int convert_to_digit(char s)
+{
+	int digit = s - '0';
+
+	if (digit < 0 || digit > 9)
+	{
+		printf("Error\n");
+		exit(98);
+	}
+	return (digit);
+}
+/**
+ *_product - multiplies string of numbers by a single digit
+ *
+ *@prod:buffer to store result
+ *@mul:string of no.
+ *@digit:single digit
+ *@zeroes:leading zeroes
+ *
+ *Return:void
+ */
+void _product(char *prod, char *mul, int digit, int zeroes)
+{
+	int mul_len, num, tens = 0;
+
+	mul_len = _strlen(mul) - 1;
+	mul += mul_len;
+
+	while (*prod)
+	{
+		*prod = 'x';
+		prod++;
+	}
+	prod--;
+
+	while (zeroes--)
+	{
+		*prod = '0';
+		prod--;
+	}
+	for (; mul_len >= 0; mul_len--, prod--, mul--)
+	{
+		if (*mul < '0' || *mul > '9')
+		{
+			printf("Error\n");
+			exit(98);
+		}
+		num = (*mul - '0') * digit;
+		num += tens;
+		*prod = (num % 10) + '0';
+		tens = num / 10;
+	}
+	if (tens)
+	{
+		*prod = (tens % 10) + '0';
+	}
+}
+/**
+ *nums_add - adds numbers stored in two strings
+ *
+ *@final_prod:final product buffer
+ *@next_prod :next product to be added
+ *@next_len:length of next prod
+ *
+ *Return:void
+ */
+void nums_add(char *final_prod, char *next_prod, int next_len)
+{
+	int num, tens;
+
+	tens = 0;
+	while (*(final_prod + 1))
+	{
+		final_prod++;
+	}
+	while (*(next_prod + 1))
+	{
+		next_prod++;
+	}
+	for (; *final_prod != 'x'; final_prod--)
+	{
+		num = (*final_prod - '0') + (*next_prod - '0');
+		num += tens;
+		*final_prod = (num % 10) + '0';
+		tens = num / 10;
+		next_prod--;
+		next_len--;
+	}
+	for (; next_len >= 0 && *next_prod != 'x'; next_len--)
+	{
+		num = (*next_prod - '0');
+		num += tens;
+		*final_prod = (num % 10) + '0';
+		tens = num / 10;
+		final_prod--;
+		next_prod--;
+	}
+	if (tens)
+	{
+		*final_prod = (tens % 10) + '0';
+	}
+}
+/**
+ *main - multiplies two positive numbers and prints the result
+ *
+ *@argc:arguement count
+ *@argv:arguement vector
+ *Return:(0- success)
+ */
 int main(int argc, char *argv[])
 {
-	int num1_length, num2_length;
-	char *result;
+	char *final_prod, *next_prod;
+	int i, size, digit, zeroes = 0;
 
 	if (argc != 3)
 	{
 		printf("Error\n");
 		exit(98);
 	}
-
-	num1_length = getLengthOfNum(argv[1]);
-
-	if (!num1_length)
+	if (*(argv[1]) == '0')
 	{
-		printf("Error\n");
-		exit(98);
+		argv[1] = _zero_iteration(argv[1]);
 	}
-
-	num2_length = getLengthOfNum(argv[2]);
-
-	if (!num2_length)
+	if (*(argv[2]) == '0')
 	{
-		printf("Error\n");
-		exit(98);
+		argv[2] = _zero_iteration(argv[2]);
 	}
-
-	result = malloc(num1_length + num2_length);
-
-	if (!result)
-		return (1);
-
-	populateResult(result, argv[1], num1_length, argv[2], num2_length);
-
-	print_result(result, num1_length + num2_length);
-	printf("\n");
-	free(result);
-
-	return (0);
-}
-
-/**
- * getLengthOfNum - length of numbers in a string
- *
- * @str: pointer to string of numbers
- *
- * Return: integer (SUCCESS) or
- * NULL, if string includes char
- */
-
-int getLengthOfNum(char *str)
-{
-	int i = 0;
-
-	while (str[i])
+	if (*(argv[1]) == '\0' || *(argv[2]) == '\0')
 	{
-		if (str[i] >= '0' && str[i] <= '9')
-			i++;
-		else
-			return ('\0');
-
+		printf("0\n");
+		return (0);
 	}
+	size = _strlen(argv[1]) + _strlen(argv[2]);
+	final_prod = xarray(size + 1);
+	next_prod = xarray(size + 1);
 
-	return (i);
-}
-
-/**
- * populateResult - multiplies two numbers stored as string
- * and stores result in @dest
- *
- * @dest: pointer to where @num1 * @num2 should be stored
- *
- * @n1: positive number stored as string in an array
- *
- * @n2: positive number stored as string in an array
- *
- * @n1_len: length of @n1
- *
- * @n2_len: length of @n2
- */
-
-void populateResult(char *dest, char *n1, int n1_len, char *n2, int n2_len)
-{
-	int i, j, k, temp_value, non_carry_value;
-	int carry_value = 0;
-	char *multiplicand, *multiplier;
-
-	if (n1_len > n2_len)
+	for (i = _strlen(argv[2]) - 1; i >= 0; i--)
 	{
-		i = n1_len - 1;
-		j = n2_len - 1;
-		multiplicand = n1;
-		multiplier = n2;
+		digit = convert_to_digit(*(argv[2] + i));
+		_product(next_prod, argv[1], digit, zeroes++);
+		nums_add(final_prod, next_prod, size - 1);
 	}
-	else
+	for (i = 0; final_prod[i]; i++)
 	{
-		i = n2_len - 1;
-		j = n1_len - 1;
-		multiplicand = n2;
-		multiplier = n1;
-	}
-
-	while (i >= 0)
-	{
-		k = i;
-
-		while (k >= 0)
+		if (final_prod[i] != 'x')
 		{
-			temp_value = ((multiplicand[k] - '0') * (multiplier[j] - '0'));
-			temp_value += carry_value;
-
-			if (j + 1 <= n2_len - 1 && dest[k + j + 1] >= '0' && dest[k + j + 1] <= '9')
-				temp_value += dest[k + j + 1] - '0';
-
-			if (temp_value < 10)
-			{
-				non_carry_value = temp_value;
-				carry_value = 0;
-			}
-			else
-			{
-				non_carry_value = temp_value % 10;
-				carry_value = temp_value / 10;
-			}
-
-			dest[k + j + 1] = non_carry_value + '0';
-			k--;
+			putchar(final_prod[i]);
 		}
-
-		if (carry_value)
-			dest[k + j + 1] = carry_value + '0';
-
-		carry_value = 0;
-
-		if (j > 0)
-			j--;
-		else
-			i = -1;
 	}
-
-	free(dest);
-	free(multiplicand);
-	free(multiplier);
-}
-
-/**
- * print_result - prints numbers stored as string in a memory location
- *
- * @src: pointer to memory that stores numbers as strings
- *
- * @length: length of @src
- */
-
-void print_result(char *src, int length)
-{
-	int i;
-
-	for (i = 0; i < length; i++)
-	{
-		if (src[i] >= '0' && src[i] <= '9')
-		printf("%c", src[i]);
-	}
+	putchar('\n');
+	free(next_prod);
+	free(final_prod);
+	return (0);
 }
