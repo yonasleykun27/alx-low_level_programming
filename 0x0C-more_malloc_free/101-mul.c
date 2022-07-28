@@ -1,6 +1,4 @@
 #include "main.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 int find_len(char *str);
 char *create_xarray(int size);
@@ -40,7 +38,7 @@ char *create_xarray(int size)
 
 	array = malloc(sizeof(char) * size);
 
-	if (!array)
+	if (array == NULL)
 		exit(98);
 
 	for (index = 0; index < (size - 1); index++)
