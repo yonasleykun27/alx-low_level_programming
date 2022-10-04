@@ -1,1 +1,1 @@
-0x07. C - Even more pointers, arrays and strings
+Solutions to tasks on more pointers & arrays
